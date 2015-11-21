@@ -1,0 +1,54 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrant file for Relay
+# HTTP port: 8083
+# MySQL port: 3309
+# Redis port: 6382
+
+Vagrant.configure("2") do |config|
+
+    # vid is the vagrant identifier. letters, numbers, and hyphens only.
+    # In other parts this will be converted to underscores where needed.
+    vid = 'hackthedinos'
+
+    # vagrant host port offset for port forwarding. The base ports are:
+    # 80 > 8080
+    # 443 > 4433
+    # 3306 > 3306
+    # 6379 > 6379
+    # This setting adds an offset so multiple VMs do not have port conflicts.
+    port_offset = 2
+
+    # shared folder mapping and permissions
+    config.vm.synced_folder "..", "/var/www/hackthedinos", group: "www-data", :mount_options => ['dmode=775','fmode=775']
+    config.vm.synced_folder "..", "/home/vagrant/project", group: "www-data", :mount_options => ['dmode=777','fmode=777']
+
+
+    #################################################
+    # no further configuration needed past this point
+    #################################################
+
+    config.vm.network :forwarded_port, guest: 80, host: 8080 + port_offset, auto_correct: true
+    config.vm.network :forwarded_port, guest: 3306, host: 3306 + port_offset, auto_correct: true
+    config.vm.network :forwarded_port, guest: 6379, host: 6379 + port_offset, auto_correct: true
+
+    vidu = vid.gsub('-', '_')
+
+    config.vm.hostname = vid + "-dev"
+
+    config.vm.provider :virtualbox do |vbox|
+        vbox.customize ["modifyvm", :id, "--rtcuseutc", "on"]
+        vbox.customize ["modifyvm", :id, "--name", vidu + "_vagrant"]
+    end
+
+    config.vm.synced_folder "salt/root/", "/srv/salt/"
+
+    config.vm.provision :shell, path: "shell/init.sh", privileged: false
+
+    config.vm.define vidu + "_dev" do |vmc|
+        vmc.vm.box = "precise64"
+        vmc.vm.box_url = "http://files.vagrantup.com/precise64.box"
+    end
+
+end

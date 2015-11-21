@@ -1,0 +1,11 @@
+.idea
+.DS_Store
+.vagrant
+logs
+vendor
+.composer.json.swp
+vagrant/salt/etc/minion.dpkg-dist
+vagrant/salt/etc/minion_id
+vagrant/salt/etc/pki/
+composer.lock
+build/versions
