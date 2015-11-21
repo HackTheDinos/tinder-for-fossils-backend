@@ -1,14 +1,3 @@
-#php base:
-#    pkgrepo.managed:
-#        - humanname: PHP PPA
-#        - name: deb http://ppa.launchpad.net/ondrej/php5/ubuntu precise main
-#        - dist: precise
-#        - file: /etc/apt/sources.list.d/php.list
-#        - keyid: E5267A6C
-#        - keyserver: keyserver.ubuntu.com
-#        - require_in:
-#            - pkg: php5
-
 php5:
     pkg.installed
 

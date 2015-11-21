@@ -1,54 +1,47 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Vagrant file for Relay
-# HTTP port: 8083
-# MySQL port: 3309
-# Redis port: 6382
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure(2) do |config|
 
-Vagrant.configure("2") do |config|
-
-    # vid is the vagrant identifier. letters, numbers, and hyphens only.
-    # In other parts this will be converted to underscores where needed.
-    vid = 'hackthedinos'
-
-    # vagrant host port offset for port forwarding. The base ports are:
-    # 80 > 8080
-    # 443 > 4433
-    # 3306 > 3306
-    # 6379 > 6379
-    # This setting adds an offset so multiple VMs do not have port conflicts.
-    port_offset = 2
+    name = "hackthedinos"
+    offset = 0
 
     # shared folder mapping and permissions
     config.vm.synced_folder "..", "/var/www/hackthedinos", group: "www-data", :mount_options => ['dmode=775','fmode=775']
     config.vm.synced_folder "..", "/home/vagrant/project", group: "www-data", :mount_options => ['dmode=777','fmode=777']
 
+    config.vm.network :forwarded_port, guest: 80, host: 8080 + offset, auto_correct: true
+    config.vm.network :forwarded_port, guest: 3306, host: 3306 + offset, auto_correct: true
 
-    #################################################
-    # no further configuration needed past this point
-    #################################################
+    ####################################################
+    # No further configuration needed below this point
+    ####################################################
 
-    config.vm.network :forwarded_port, guest: 80, host: 8080 + port_offset, auto_correct: true
-    config.vm.network :forwarded_port, guest: 3306, host: 3306 + port_offset, auto_correct: true
-    config.vm.network :forwarded_port, guest: 6379, host: 6379 + port_offset, auto_correct: true
-
-    vidu = vid.gsub('-', '_')
-
-    config.vm.hostname = vid + "-dev"
+    config.vm.hostname = name + "-dev"
 
     config.vm.provider :virtualbox do |vbox|
         vbox.customize ["modifyvm", :id, "--rtcuseutc", "on"]
-        vbox.customize ["modifyvm", :id, "--name", vidu + "_vagrant"]
+        vbox.customize ["modifyvm", :id, "--name", name + "_vagrant"]
     end
 
     config.vm.synced_folder "salt/root/", "/srv/salt/"
+    config.vm.synced_folder "salt/pillar/", "/srv/pillar/"
+    config.vm.synced_folder "salt/etc/", "/etc/salt/"
 
-    config.vm.provision :shell, path: "shell/init.sh", privileged: false
+    config.vm.provision :salt do |salt|
+        salt.bootstrap_options = "-P"
+        salt.minion_config = "salt/minion"
+        salt.run_highstate = true
+        salt.verbose = true
+    end
 
-    config.vm.define vidu + "_dev" do |vmc|
-        vmc.vm.box = "precise64"
-        vmc.vm.box_url = "http://files.vagrantup.com/precise64.box"
+    config.vm.define name + "_dev" do |vmc|
+        vmc.vm.box = "ubuntu/trusty64"
+        vmc.vm.box_check_update = true
     end
 
 end

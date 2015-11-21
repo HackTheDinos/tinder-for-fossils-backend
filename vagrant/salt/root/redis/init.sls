@@ -1,3 +1,9 @@
+#TODO: OAuth Client ID for the default client
+{% set clientid = 'Relay' %}
+
+#TODO: OAuth Client Secret for the default client
+{% set clientsecret = 'A82sX2VkEGoUb2SX13YOvjs9DsfVHT5DBh3OwS22' %}
+
 redis-server:
     pkg.installed
 
@@ -6,11 +12,6 @@ redis-server:
         - source: salt://redis/redis.conf
         - require:
             - pkg: redis-server
-#TODO: OAuth Client ID for the default client
-{% set clientid = 'Relay' %}
-
-#TODO: OAuth Client Secret for the default client
-{% set clientsecret = 'A82sX2VkEGoUb2SX13YOvjs9DsfVHT5DBh3OwS22' %}
 
 #Set test oauth client in Redis
 echo 'SET oauth_clients:{{ clientid }} "{\"client_secret\":\"{{ clientsecret }}\",\"scope\":\"client\"}"' | redis-cli -x:

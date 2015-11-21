@@ -19,4 +19,3 @@ useful utils:
             - curl
             - git
             - gpac
-            - sendmail

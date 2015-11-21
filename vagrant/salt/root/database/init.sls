@@ -1,3 +1,9 @@
+#TODO: Name the MySQL database and user to create (database and user will be named the same)
+{% set db = 'hackthedinos' %}
+
+#TODO: Set the password for the database user.
+{% set pass = 'hackthedinos' %}
+
 database base:
     pkgrepo.managed:
         - humanname: phpmyadmin PPA
@@ -34,12 +40,6 @@ mysql-client-5.5:
 python-mysqldb:
     pkg.installed
 
-#TODO: Name the MySQL database and user to create (database and user will be named the same here)
-{% set db = 'hackthedinos' %}
-
-#TODO: Set the password for the database user.
-{% set pass = 'hackthedinos' %}
-
 {{ db }}:
     mysql_database.present:
         - require:
@@ -70,7 +70,6 @@ phpmyadmin:
 
 /etc/phpmyadmin/config.inc.php:
     file.managed:
-        - name:
         - source: salt://database/config.inc.php
         - require:
             - pkg: phpmyadmin
