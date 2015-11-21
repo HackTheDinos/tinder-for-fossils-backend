@@ -7,5 +7,4 @@ vendor
 vagrant/salt/etc/minion.dpkg-dist
 vagrant/salt/etc/minion_id
 vagrant/salt/etc/pki/
-composer.lock
 build/versions

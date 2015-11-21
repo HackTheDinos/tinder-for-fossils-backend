@@ -1,3 +1,24 @@
 {
+    "name": "hackthedinos",
+    "type": "project",
+    "description": "Hack The Dinos",
+    "prefer-stable": true,
 
+    "require": {
+        "silex/silex": "1.*",
+        "igorw/config-service-provider": "~1.2",
+        "bshaffer/oauth2-server-php": "~1.6",
+        "bshaffer/oauth2-server-httpfoundation-bridge": "~1.0",
+        "monolog/monolog": "1.*",
+        "symfony/console": "2.*",
+        "symfony/templating": "2.*",
+        "swiftmailer/swiftmailer": "5.*",
+        "robmorgan/phinx": "^0.4.6"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "HackTheDinos\\": "src/"
+        }
+    }
 }
