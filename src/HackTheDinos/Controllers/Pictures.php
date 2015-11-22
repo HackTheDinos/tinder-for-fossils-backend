@@ -57,7 +57,8 @@ class Pictures
         $file->move($path, $newfilename);
 
         // TODO create a model object
-        $picture = new Models\Picture($newfilename);
+        $picture = new Models\Picture();
+        $picture->filepath = $newfilename;
 
         // TODO save to DB
         if ($this->repo->save($picture)) {
@@ -67,13 +68,13 @@ class Pictures
                 'picture' => (array)$picture
             ]);
             // TODO return picture db id
-            return new HttpFoundation\JsonResponse((array)$picture, 200);
+            return new HttpFoundation\JsonResponse($picture, 201);
         }
         $this->log->addWarning('Unable to create picture', [
             'namespace' => 'HackTheDinos\\Controllers\\Picture',
             'method' => 'postIndex',
             'request' => $request->getContent(),
-            'user' => (array)$picture
+            'picture' => (array)$picture
         ]);
         return new HttpFoundation\Response('Bad Request', 400);
     }

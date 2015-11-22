@@ -1,4 +1,3 @@
-
 <?php namespace HackTheDinos\Repositories\Pdo;
 
 use HackTheDinos\Models;
@@ -18,7 +17,7 @@ class Fossils implements Interfaces\Fossils
     private $converter;
 
     /**
-     * Users constructor.
+     * Fossils constructor.
      * @param \PDO $pdo
      * @param Services\Converter $converter
      */
@@ -55,9 +54,6 @@ class Fossils implements Interfaces\Fossils
         if (isset($modelArray['id'])) {
             unset($modelArray['id']);
         }
-
-        //Set the updated_at value in the database
-        $modelArray['updated_at'] = date('Y-m-d G:i:s');
 
         $keys = array_keys($modelArray);
         $vals = array_values($modelArray);

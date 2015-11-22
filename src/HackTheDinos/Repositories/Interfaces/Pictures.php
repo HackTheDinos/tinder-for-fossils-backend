@@ -8,7 +8,7 @@ interface Pictures
      * Get a picture based on Id.
      *
      * @param integer $id
-     * @return Models\Pictures or null
+     * @return Models\Picture or null
      */
     public function getById($id);
 

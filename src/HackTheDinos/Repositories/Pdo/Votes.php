@@ -4,7 +4,7 @@ use HackTheDinos\Models;
 use HackTheDinos\Repositories\Interfaces;
 use HackTheDinos\Services;
 
-class Users implements Interfaces\Users
+class Votes implements Interfaces\Votes
 {
     /**
      * @var \PDO
@@ -17,7 +17,7 @@ class Users implements Interfaces\Users
     private $converter;
 
     /**
-     * Users constructor.
+     * Fossils constructor.
      * @param \PDO $pdo
      * @param Services\Converter $converter
      */
@@ -27,38 +27,43 @@ class Users implements Interfaces\Users
         $this->converter = $converter;
     }
 
-    public function getByEmailAndPassword($email, $password)
-    {
-        $users = $this->getAll(['email' => $email], 1);
-        if (empty($users)) {
-            return null;
-        }
-
-        return password_verify($password, $users[0]->password) ? $users[0] : null;
-    }
-
-    public function getById($userId)
-    {
-        $users = $this->getAll(['id' => $userId], 1);
-        return empty($users) ? null : $users[0];
-    }
-
+    /**
+     * @param array $filters
+     * @param int $count
+     * @param int $start
+     * @return Models\Vote[]
+     */
     public function getAll(array $filters = [], $count = 10, $start = 0)
     {
-        $temp = new Models\User();
+        $temp = new Models\Vote();
 
         //This along with pdo prepared statements should prevent a sql injection attack
         $columns = $this->converter->filterArrayToSqlColumns($filters, $temp);
         $whereClause = empty($columns) ? '' : 'WHERE '.implode('=? AND ', array_keys($columns)).'=?';
-        $query = $this->pdo->prepare("SELECT * FROM users {$whereClause} LIMIT {$start}, {$count}");
+        $query = $this->pdo->prepare("SELECT * FROM votes {$whereClause} LIMIT {$start}, {$count}");
         $entities = $query->execute(array_values($columns)) ? $query->fetchAll(\PDO::FETCH_ASSOC) : [];
 
         return $this->converter->entityArraysToModels($entities, $temp);
     }
 
-    public function save(Models\User &$user)
+    /**
+     * @param Models\Fossil $fossil
+     * @return Models\Vote[]
+     */
+    public function getAllForFossil(Models\Fossil $fossil, $count = 10, $start = 0)
     {
-        $modelArray = $this->converter->modelToEntityArray($user);
+        return $this->getAll(['fossilId' => $fossil->id], $count, $start);
+    }
+
+    /**
+     * Creates or updates a vote.
+     *
+     * @param Models\Vote $vote
+     * @return bool
+     */
+    public function save(Models\Vote &$vote)
+    {
+        $modelArray = $this->converter->modelToEntityArray($vote);
 
         //Prevent someone from setting a different ID for a preexisting entry.
         if (isset($modelArray['id'])) {
@@ -68,16 +73,16 @@ class Users implements Interfaces\Users
         $keys = array_keys($modelArray);
         $vals = array_values($modelArray);
 
-        if (isset($user->id)) {
-            $query = $this->pdo->prepare('UPDATE users SET '.implode('=?, ', $keys).'=? WHERE id=? LIMIT 1');
-            $vals[] = $user->id;
+        if (isset($vote->id)) {
+            $query = $this->pdo->prepare('UPDATE votes SET '.implode('=?, ', $keys).'=? WHERE id=? LIMIT 1');
+            $vals[] = $vote->id;
             return $query->execute($vals);
         } else {
-            $query = $this->pdo->prepare('INSERT INTO users ('.implode(',', $keys).') VALUES ('.implode(',', array_fill(0, count($vals), '?')).')');
+            $query = $this->pdo->prepare('INSERT INTO votes ('.implode(',', $keys).') VALUES ('.implode(',', array_fill(0, count($vals), '?')).')');
             if ($query->execute($vals)) {
                 //Refetch to populate everything properly.
                 $refetched = $this->getAll(['id' => $this->pdo->lastInsertId()], 1);
-                $user = $refetched[0];
+                $vote = $refetched[0];
                 return true;
             }
         }
