@@ -38,7 +38,7 @@ $app['picture.controller'] = $app->share(function() use ($app) {
 
 $app['fossil.controller'] = $app->share(function() use ($app) {
     return new \HackTheDinos\Controllers\Fossils(
-        $app['fossils.respository'],
+        $app['fossils.repository'],
         $app['votes.repository'],
         $app['converter.service'],
         $app['log.service']
