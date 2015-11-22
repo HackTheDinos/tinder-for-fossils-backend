@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class InitialMigration extends AbstractMigration
+class AutoincrementPrimaryKeys extends AbstractMigration
 {
     /**
      * Change Method.
@@ -57,7 +57,7 @@ class InitialMigration extends AbstractMigration
 		(ID        BIGINT NOT NULL AUTO_INCREMENT
 		, fossil_id  BIGINT NOT NULL
 		, vote      Bool   NOT NULL
-		, visitor_id BIGINT NOT NULL
+		, visitor_id BIGINT 
 		, PRIMARY KEY (id)
 		-- , FOREIGN KEY (fossil_id)  REFERENCES fossil(id)
 		-- , FOREIGN KEY (visitor_id) REFERENCES visitor(id)
@@ -76,7 +76,7 @@ class InitialMigration extends AbstractMigration
 	);
 
 	$auto_int_100 = $this->execute
-	("ALTER TABLE visitor AUTO_INCREMENT=100"
+	("ALTER TABLE visitor AUTO_INCREMENT=101"
 	);
 
 	$picture = $this->execute
@@ -84,12 +84,15 @@ class InitialMigration extends AbstractMigration
 		( id           BIGINT NOT NULL AUTO_INCREMENT
 		, primary_picture BOOL   NOT NULL
 		, fossil_id     BIGINT NOT NULL
+		, filepath VARCHAR
 		, picture_data    BLOB(65535)	
 		-- add foreign key to fossil(id)
 		);"	
 	);
+
 	$auto_int_1000 = $this->execute
-	("ALTER TABLE picture AUTO_INCREMENT=1000"
+	("ALTER TABLE picture AUTO_INCREMENT=1001"
+	);
 
 	$archived_emails = $this->execute
 	("CREATE TABLE archived_emails

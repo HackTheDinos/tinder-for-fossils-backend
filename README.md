@@ -32,4 +32,9 @@ This will add a new file to `src\HackTheDinos\Migrations`. Edit that file adding
 
 ```
 $ php vendor/bin/phinx migrate
+
 ```
+
+*For presentation*
+
+https://hackthedinos.slack.com/files/siruisly/F0F32L6B1/hackthedinos-fossl.key.zip
