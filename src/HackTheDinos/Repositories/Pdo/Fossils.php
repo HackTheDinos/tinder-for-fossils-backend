@@ -40,7 +40,7 @@ class Fossils implements Interfaces\Fossils
         //This along with pdo prepared statements should prevent a sql injection attack
         $columns = $this->converter->filterArrayToSqlColumns($filters, $temp);
         $whereClause = empty($columns) ? '' : 'WHERE '.implode('=? AND ', array_keys($columns)).'=?';
-        $query = $this->pdo->prepare("SELECT * FROM fossils {$whereClause} LIMIT {$start}, {$count}");
+        $query = $this->pdo->prepare("SELECT * FROM fossil {$whereClause} LIMIT {$start}, {$count}");
         $entities = $query->execute(array_values($columns)) ? $query->fetchAll(\PDO::FETCH_ASSOC) : [];
 
         return $this->converter->entityArraysToModels($entities, $temp);
