@@ -43,7 +43,7 @@ class Users
     public function getIndex($id, HttpFoundation\Request $request)
     {
         $this->log->addDebug(print_r($request, true), [
-            'namespace' => 'HackTheDinos\\Controllers\\Dog',
+            'namespace' => 'HackTheDinos\\Controllers\\User',
             'method' => 'getIndex',
             'type' => 'request',
         ]);

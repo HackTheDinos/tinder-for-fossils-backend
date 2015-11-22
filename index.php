@@ -28,10 +28,18 @@ $app['user.controller'] = $app->share(function() use ($app) {
     );
 });
 
+$app['picture.controller'] = $app->share(function() use ($app) {
+    return new \HackTheDinos\Controllers\Pictures(
+        $app['pictures.repository'],
+        $app['converter.service'],
+        $app['log.service']
+    );
+});
+
 $addCorsHeaders = function (\Symfony\Component\HttpFoundation\Request $request,
                             \Symfony\Component\HttpFoundation\Response $response) use ($app) {
 
-    $response->headers->set('Access-Control-Allow-Origin', $app['cors.domains'], false);
+    // $response->headers->set('Access-Control-Allow-Origin', $app['cors.domains'], false);
     return $response;
 };
 
@@ -62,5 +70,8 @@ $app->options('/users/{id}', 'user.controller:optionsIndex')
     ->value('id', null)
     ->after($addCorsHeaders)
     ->after($addOptionsHeaders);
+
+$app->post('/pictures', 'picture.controller:postIndex')
+    ->after($addCorsHeaders);
 
 $app->run();
