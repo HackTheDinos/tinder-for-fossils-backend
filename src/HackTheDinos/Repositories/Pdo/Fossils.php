@@ -55,9 +55,6 @@ class Fossils implements Interfaces\Fossils
             unset($modelArray['id']);
         }
 
-        //Set the updated_at value in the database
-        $modelArray['updated_at'] = date('Y-m-d G:i:s');
-
         $keys = array_keys($modelArray);
         $vals = array_values($modelArray);
 

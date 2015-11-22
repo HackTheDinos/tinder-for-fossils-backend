@@ -57,7 +57,8 @@ class Pictures
         $file->move($path, $newfilename);
 
         // TODO create a model object
-        $picture = new Models\Picture($newfilename);
+        $picture = new Models\Picture();
+        $picture->filepath = $newfilename;
 
         // TODO save to DB
         if ($this->repo->save($picture)) {

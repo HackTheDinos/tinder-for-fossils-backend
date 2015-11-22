@@ -22,10 +22,6 @@ class Picture implements \JsonSerializable
      */
     public $fossilId;
 
-    public function __construct($filepath)
-    {
-        $this->filepath = $filepath;
-    }
 
     public function jsonSerialize()
     {
