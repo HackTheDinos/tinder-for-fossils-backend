@@ -39,6 +39,7 @@ $app['picture.controller'] = $app->share(function() use ($app) {
 $app['fossil.controller'] = $app->share(function() use ($app) {
     return new \HackTheDinos\Controllers\Fossils(
         $app['fossils.respository'],
+        $app['votes.repository'],
         $app['converter.service'],
         $app['log.service']
     );
@@ -89,6 +90,14 @@ $app->post('/fossils', 'fossil.controller:postIndex')
     ->after($addCorsHeaders);
 $app->options('/fossils/{id}', 'fossil.controller:optionsIndex')
     ->value('id', null)
+    ->after($addCorsHeaders)
+    ->after($addOptionsHeaders);
+
+$app->post('/fossils/{fossilId}/votes', 'fossil.controller:postVotes')
+    ->after($addCorsHeaders);
+$app->get('/fossils/{fossilId}/votes', 'fossil.controller:getVotes')
+    ->after($addCorsHeaders);
+$app->options('/fossils/{id}/votes', 'fossil.controller:optionsIndex')
     ->after($addCorsHeaders)
     ->after($addOptionsHeaders);
 

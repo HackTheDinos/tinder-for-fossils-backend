@@ -10,7 +10,12 @@ class Fossils
     /**
      * @var Interfaces\Fossils
      */
-    private $repo;
+    private $fossilRepo;
+
+    /**
+     * @var Interfaces\Votes
+     */
+    private $voteRepo;
 
     /**
      * @var Services\Converter
@@ -23,14 +28,16 @@ class Fossils
     private $log;
 
     /**
-     * Users constructor.
-     * @param Interfaces\Fossils $repo
+     * Fossils constructor.
+     * @param Interfaces\Fossils $fossilRepo
+     * @param Interfaces\Votes $voteRepo
      * @param Services\Converter $converter
      * @param \Monolog\Logger $log
      */
-    public function __construct(Interfaces\Fossils $repo, Services\Converter $converter, \Monolog\Logger $log)
+    public function __construct(Interfaces\Fossils $fossilRepo, Interfaces\Votes $voteRepo, Services\Converter $converter, \Monolog\Logger $log)
     {
-        $this->repo = $repo;
+        $this->fossilRepo = $fossilRepo;
+        $this->voteRepo = $voteRepo;
         $this->converter = $converter;
         $this->log = $log;
     }
@@ -54,7 +61,7 @@ class Fossils
         $start = $request->get('start', 0);
         $start = $start < 0 ? 0 : $start; //Prevent negatives on the start value
 
-        $users = is_null($id) ? $this->repo->getAll([], $count, $start) : $this->repo->getById($id);
+        $users = is_null($id) ? $this->fossilRepo->getAll([], $count, $start) : $this->fossilRepo->getById($id);
 
         $this->log->addInfo('Found Users', [
             'namespace' => 'HackTheDinos\\Controllers\\Fossils',
@@ -74,7 +81,7 @@ class Fossils
         ]);
 
         $fossil = $this->converter->entityArrayToModel(json_decode($request->getContent(), true), new Models\Fossil());
-        if ($this->repo->save($fossil)) {
+        if ($this->fossilRepo->save($fossil)) {
             $this->log->addInfo('Created new user', [
                 'namespace' => 'HackTheDinos\\Controllers\\Fossils',
                 'method' => 'postIndex',
@@ -114,4 +121,94 @@ class Fossils
 
         return $response;
     }
+
+    /**
+     * @param $fossilId
+     * @param HttpFoundation\Request $request
+     * @return HttpFoundation\JsonResponse|HttpFoundation\Response
+     */
+    public function getVotes($fossilId, HttpFoundation\Request $request)
+    {
+        $this->log->addDebug(print_r($request, true), [
+            'namespace' => 'HackTheDinos\\Controllers\\Fossil',
+            'method' => 'getVotes',
+            'type' => 'request',
+        ]);
+
+        $fossil = $this->fossilRepo->getById($fossilId);
+
+        if (is_null($fossil)) {
+            $this->log->addWarning('Could not find fossil', [
+                'namespace' => 'HackTheDinos\\Controllers\\Fossil',
+                'method' => 'getVotes',
+                'fossilId' => $fossilId
+            ]);
+
+            return new HttpFoundation\Response('Not Found', 404);
+        }
+
+        $count = $request->get('count', 10);
+        $count = $count > 100 ? 100 : $count; //Cap the max number of returned results
+        $start = $request->get('start', 0);
+        $start = $start < 0 ? 0 : $start; //Prevent negatives on the start value
+
+        $votes = $this->voteRepo->getAllForFossil($fossil, $count, $start);
+
+        $this->log->addInfo('Found votes', [
+            'namespace' => 'HackTheDinos\\Controllers\\Fossils',
+            'method' => 'getIndex',
+            'fossil' => $fossil,
+            'votes' => json_encode($votes)
+        ]);
+
+        return new HttpFoundation\JsonResponse($votes, 200);
+    }
+
+    /**
+     * @param int $fossilId
+     * @param HttpFoundation\Request $request
+     * @return HttpFoundation\JsonResponse|HttpFoundation\Response
+     */
+    public function postVotes($fossilId, HttpFoundation\Request $request)
+    {
+        $this->log->addDebug(print_r($request, true), [
+            'namespace' => 'HackTheDinos\\Controllers\\Fossils',
+            'method' => 'postVotes',
+            'type' => 'request',
+        ]);
+
+        $fossil = $this->fossilRepo->getById($fossilId);
+
+        if (is_null($fossil)) {
+            $this->log->addWarning('Could not find fossil', [
+                'namespace' => 'HackTheDinos\\Controllers\\Fossils',
+                'method' => 'postVotes',
+                'fossilId' => $fossilId
+            ]);
+
+            return new HttpFoundation\Response('Dog Not Found', 400);
+        }
+
+        $vote = $this->converter->entityArrayToModel(json_decode($request->getContent(), true), new Models\Vote());
+        $vote->fossilId = $fossil->id;
+        if ($this->voteRepo->save($vote)) {
+            $this->log->addInfo('Created new vote', [
+                'namespace' => 'HackTheDinos\\Controllers\\Fossils',
+                'method' => 'postVote',
+                'fossil' => $fossil,
+                'vote' => $vote
+            ]);
+            return new HttpFoundation\JsonResponse($vote, 201);
+        }
+
+        $this->log->addWarning('Unable to create vote', [
+            'namespace' => 'HackTheDinos\\Controllers\\Fossils',
+            'method' => 'postVotes',
+            'request' => $request->getContent(),
+            'fossil' => $fossil,
+            'vote' => $vote
+        ]);
+        return new HttpFoundation\Response('Bad Request', 400);
+    }
+
 }

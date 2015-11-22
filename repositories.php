@@ -20,3 +20,10 @@ $app['fossils.repository'] = $app->share(function () use ($app) {
         $app['converter.service']
     );
 });
+
+$app['votes.repository'] = $app->share(function () use ($app) {
+    return new \HackTheDinos\Repositories\Pdo\Votes(
+        $app['pdo.service'],
+        $app['converter.service']
+    );
+});
