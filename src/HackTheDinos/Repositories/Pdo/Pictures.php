@@ -40,7 +40,7 @@ class Pictures implements Interfaces\Pictures
         //This along with pdo prepared statements should prevent a sql injection attack
         $columns = $this->converter->filterArrayToSqlColumns($filters, $temp);
         $whereClause = empty($columns) ? '' : 'WHERE '.implode('=? AND ', array_keys($columns)).'=?';
-        $query = $this->pdo->prepare("SELECT * FROM pictures {$whereClause} LIMIT {$start}, {$count}");
+        $query = $this->pdo->prepare("SELECT * FROM picture {$whereClause} LIMIT {$start}, {$count}");
         $entities = $query->execute(array_values($columns)) ? $query->fetchAll(\PDO::FETCH_ASSOC) : [];
 
         return $this->converter->entityArraysToModels($entities, $temp);
@@ -55,18 +55,18 @@ class Pictures implements Interfaces\Pictures
             unset($modelArray['id']);
         }
 
-        //Set the updated_at value in the database
+        // Set the updated_at value in the database
         $modelArray['updated_at'] = date('Y-m-d G:i:s');
 
         $keys = array_keys($modelArray);
         $vals = array_values($modelArray);
 
         if (isset($picture->id)) {
-            $query = $this->pdo->prepare('UPDATE pictures SET '.implode('=?, ', $keys).'=? WHERE id=? LIMIT 1');
+            $query = $this->pdo->prepare('UPDATE picture SET '.implode('=?, ', $keys).'=? WHERE id=? LIMIT 1');
             $vals[] = $picture->id;
             return $query->execute($vals);
         } else {
-            $query = $this->pdo->prepare('INSERT INTO pictures ('.implode(',', $keys).') VALUES ('.implode(',', array_fill(0, count($vals), '?')).')');
+            $query = $this->pdo->prepare('INSERT INTO picture ('.implode(',', $keys).') VALUES ('.implode(',', array_fill(0, count($vals), '?')).')');
             if ($query->execute($vals)) {
                 //Refetch to populate everything properly.
                 $refetched = $this->getAll(['id' => $this->pdo->lastInsertId()], 1);
