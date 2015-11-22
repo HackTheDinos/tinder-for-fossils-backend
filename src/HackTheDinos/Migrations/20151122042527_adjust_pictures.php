@@ -30,7 +30,7 @@ class AdjustPictures extends AbstractMigration
     $picture = $this->execute
     ("ALTER TABLE picture
         DROP COLUMN picture_data
-      , ADD COLUMN filepath"
+      , ADD COLUMN filepath VARCHAR(1024);"
     );
     }
 }
