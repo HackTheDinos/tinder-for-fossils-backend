@@ -8,5 +8,9 @@
     RewriteRule ^ index.php [QSA,L]
 </IfModule>
 
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
 #Make sure the Authorization header is marshalled to PHP
 SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
