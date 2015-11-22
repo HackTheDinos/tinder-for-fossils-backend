@@ -24,7 +24,7 @@ class Pictures
 
     /**
      * Users constructor.
-     * @param Interfaces\Users $repo
+     * @param Interfaces\Pictures $repo
      * @param Services\Converter $converter
      * @param \Monolog\Logger $log
      */
