@@ -49,12 +49,15 @@ class Pictures
             'type' => 'request',
         ]);
 
-        // first, get the image file and store it to our upload directory.
-        $file = $request->files->get('picture');
+        $path = 'uploads';
+        $newfilename = date('Y-m-d_His') . '.jpg';
 
-        $path = __DIR__.'/../../../uploads/';
-        $newfilename = date('Y-m-d_H:i:s') . '.' . $file->guessExtension();
-        $file->move($path, $newfilename);
+        if ($_FILES["picture"]["error"] === UPLOAD_ERR_OK) {
+            $tmp_name = $_FILES["picture"]["tmp_name"];
+            move_uploaded_file($tmp_name, "uploads/{$newfilename}");
+        } else {
+            return new HttpFoundation\Response($_FILES["picture"]["error"], 500);
+        }
 
         // TODO create a model object
         $picture = new Models\Picture();

@@ -48,7 +48,7 @@ $app['fossil.controller'] = $app->share(function() use ($app) {
 $addCorsHeaders = function (\Symfony\Component\HttpFoundation\Request $request,
                             \Symfony\Component\HttpFoundation\Response $response) use ($app) {
 
-    // $response->headers->set('Access-Control-Allow-Origin', $app['cors.domains'], false);
+    $response->headers->set('Access-Control-Allow-Origin', $app['cors.domains'], false);
     return $response;
 };
 

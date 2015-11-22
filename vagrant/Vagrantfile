@@ -11,7 +11,7 @@ Vagrant.configure(2) do |config|
     offset = 0
 
     # shared folder mapping and permissions
-    config.vm.synced_folder "..", "/var/www/hackthedinos", group: "www-data", :mount_options => ['dmode=775','fmode=775']
+    config.vm.synced_folder "..", "/var/www/hackthedinos", group: "www-data", :mount_options => ['dmode=777','fmode=777']
     config.vm.synced_folder "..", "/home/vagrant/project", group: "www-data", :mount_options => ['dmode=777','fmode=777']
 
     config.vm.network :forwarded_port, guest: 80, host: 8080 + offset, auto_correct: true
