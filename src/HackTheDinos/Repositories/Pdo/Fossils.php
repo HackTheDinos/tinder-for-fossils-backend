@@ -17,7 +17,7 @@ class Fossils implements Interfaces\Fossils
     private $converter;
 
     /**
-     * Users constructor.
+     * Fossils constructor.
      * @param \PDO $pdo
      * @param Services\Converter $converter
      */

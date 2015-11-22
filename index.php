@@ -36,6 +36,14 @@ $app['picture.controller'] = $app->share(function() use ($app) {
     );
 });
 
+$app['fossil.controller'] = $app->share(function() use ($app) {
+    return new \HackTheDinos\Controllers\Fossils(
+        $app['fossils.respository'],
+        $app['converter.service'],
+        $app['log.service']
+    );
+});
+
 $addCorsHeaders = function (\Symfony\Component\HttpFoundation\Request $request,
                             \Symfony\Component\HttpFoundation\Response $response) use ($app) {
 
@@ -77,5 +85,11 @@ $app->post('/pictures', 'picture.controller:postIndex')
 $app->get('/fossils/{id}', 'fossil.controller:getIndex')
     ->value('id', null)
     ->after($addCorsHeaders);
+$app->post('/fossils', 'fossil.controller:postIndex')
+    ->after($addCorsHeaders);
+$app->options('/fossils/{id}', 'fossil.controller:optionsIndex')
+    ->value('id', null)
+    ->after($addCorsHeaders)
+    ->after($addOptionsHeaders);
 
 $app->run();
