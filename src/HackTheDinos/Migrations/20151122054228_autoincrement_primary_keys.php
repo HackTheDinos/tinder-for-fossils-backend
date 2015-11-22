@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class InitialMigration extends AbstractMigration
+class AutoincrementPrimaryKeys extends AbstractMigration
 {
     /**
      * Change Method.
@@ -89,7 +89,7 @@ class InitialMigration extends AbstractMigration
 		);"	
 	);
 	$auto_int_1000 = $this->execute
-	("ALTER TABLE picture AUTO_INCREMENT=1000"
+	("ALTER TABLE picture AUTO_INCREMENT=1000");
 
 	$archived_emails = $this->execute
 	("CREATE TABLE archived_emails
