@@ -13,17 +13,23 @@ class Picture implements \JsonSerializable
     public $filepath;
 
     /**
-     * @var \datetime
+     * @var boolean
      */
-    public $timeCreated;
+    public $primaryPicture;
+
+    /**
+     * @var int
+     */
+    public $fossilId;
+
+    public function __construct($filepath)
+    {
+        $this->filepath = $filepath;
+    }
 
     public function jsonSerialize()
     {
         $clone = clone $this;
-
-        if (!is_scalar($clone->timeCreated)) {
-           $clone->timeCreated = $clone->timeCreated->format(\DateTime::ISO8601);
-        }
 
         //Important!! Be sure to return an array and not the actual object
         //otherwise you'll get into an infinite loop as it will also have

@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class AdjustPictures extends AbstractMigration
+class PicturesNullableFields extends AbstractMigration
 {
     /**
      * Change Method.
@@ -29,8 +29,10 @@ class AdjustPictures extends AbstractMigration
     {
     $picture = $this->execute
     ("ALTER TABLE picture
-        DROP COLUMN picture_data
-      , ADD COLUMN filepath VARCHAR(1024);"
+        MODIFY COLUMN id INT AUTO INCREMENT
+      , MODIFY COLUMN filepath VARCHAR(1024) NOT NULL
+      , MODIFY COLUMN primary_picture BOOL
+      , MODIFY COLUMN fossil_id BIGINT;"
     );
     }
 }
