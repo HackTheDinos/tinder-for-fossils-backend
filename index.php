@@ -74,4 +74,8 @@ $app->options('/users/{id}', 'user.controller:optionsIndex')
 $app->post('/pictures', 'picture.controller:postIndex')
     ->after($addCorsHeaders);
 
+$app->get('/fossils/{id}', 'fossil.controller:getIndex')
+    ->value('id', null)
+    ->after($addCorsHeaders);
+
 $app->run();
