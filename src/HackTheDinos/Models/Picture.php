@@ -1,6 +1,6 @@
 <?php namespace HackTheDinos\Models;
 
-class User implements \JsonSerializable
+class Picture implements \JsonSerializable
 {
     /**
      * @var int
@@ -13,13 +13,17 @@ class User implements \JsonSerializable
     public $filepath;
 
     /**
-     * @var datetime
+     * @var \datetime
      */
     public $timeCreated;
 
     public function jsonSerialize()
     {
         $clone = clone $this;
+
+        if (!is_scalar($clone->timeCreated)) {
+           $clone->timeCreated = $clone->timeCreated->format(\DateTime::ISO8601);
+        }
 
         //Important!! Be sure to return an array and not the actual object
         //otherwise you'll get into an infinite loop as it will also have
