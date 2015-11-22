@@ -40,7 +40,7 @@ class Votes implements Interfaces\Votes
         //This along with pdo prepared statements should prevent a sql injection attack
         $columns = $this->converter->filterArrayToSqlColumns($filters, $temp);
         $whereClause = empty($columns) ? '' : 'WHERE '.implode('=? AND ', array_keys($columns)).'=?';
-        $query = $this->pdo->prepare("SELECT * FROM votes {$whereClause} LIMIT {$start}, {$count}");
+        $query = $this->pdo->prepare("SELECT * FROM vote {$whereClause} LIMIT {$start}, {$count}");
         $entities = $query->execute(array_values($columns)) ? $query->fetchAll(\PDO::FETCH_ASSOC) : [];
 
         return $this->converter->entityArraysToModels($entities, $temp);
@@ -74,11 +74,11 @@ class Votes implements Interfaces\Votes
         $vals = array_values($modelArray);
 
         if (isset($vote->id)) {
-            $query = $this->pdo->prepare('UPDATE votes SET '.implode('=?, ', $keys).'=? WHERE id=? LIMIT 1');
+            $query = $this->pdo->prepare('UPDATE vote SET '.implode('=?, ', $keys).'=? WHERE id=? LIMIT 1');
             $vals[] = $vote->id;
             return $query->execute($vals);
         } else {
-            $query = $this->pdo->prepare('INSERT INTO votes ('.implode(',', $keys).') VALUES ('.implode(',', array_fill(0, count($vals), '?')).')');
+            $query = $this->pdo->prepare('INSERT INTO vote ('.implode(',', $keys).') VALUES ('.implode(',', array_fill(0, count($vals), '?')).')');
             if ($query->execute($vals)) {
                 //Refetch to populate everything properly.
                 $refetched = $this->getAll(['id' => $this->pdo->lastInsertId()], 1);

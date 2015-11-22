@@ -17,7 +17,8 @@ $app['pictures.repository'] = $app->share(function () use ($app) {
 $app['fossils.repository'] = $app->share(function () use ($app) {
     return new \HackTheDinos\Repositories\Pdo\Fossils(
         $app['pdo.service'],
-        $app['converter.service']
+        $app['converter.service'],
+        $app['pictures.repository']
     );
 });
 

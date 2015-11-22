@@ -17,14 +17,20 @@ class Fossils implements Interfaces\Fossils
     private $converter;
 
     /**
+     * @var Interfaces\Pictures
+     */
+    private $pictureRepo;
+
+    /**
      * Fossils constructor.
      * @param \PDO $pdo
      * @param Services\Converter $converter
      */
-    public function __construct(\PDO $pdo, Services\Converter $converter)
+    public function __construct(\PDO $pdo, Services\Converter $converter, Interfaces\Pictures $pictureRepo)
     {
         $this->pdo = $pdo;
         $this->converter = $converter;
+        $this->pictureRepo = $pictureRepo;
     }
 
     public function getById($fossilId)
@@ -40,10 +46,17 @@ class Fossils implements Interfaces\Fossils
         //This along with pdo prepared statements should prevent a sql injection attack
         $columns = $this->converter->filterArrayToSqlColumns($filters, $temp);
         $whereClause = empty($columns) ? '' : 'WHERE '.implode('=? AND ', array_keys($columns)).'=?';
-        $query = $this->pdo->prepare("SELECT * FROM fossils {$whereClause} LIMIT {$start}, {$count}");
+        $query = $this->pdo->prepare("SELECT * FROM fossil {$whereClause} LIMIT {$start}, {$count}");
         $entities = $query->execute(array_values($columns)) ? $query->fetchAll(\PDO::FETCH_ASSOC) : [];
 
-        return $this->converter->entityArraysToModels($entities, $temp);
+        $models = $this->converter->entityArraysToModels($entities, $temp);
+
+        foreach ($models as $model) {
+            $pictures = $this->pictureRepo->getAll(['fossilId' => $model->id], 5);
+            $model->pictures = $pictures;
+        }
+
+        return $models;
     }
 
     public function save(Models\Fossil &$fossil)
@@ -59,11 +72,11 @@ class Fossils implements Interfaces\Fossils
         $vals = array_values($modelArray);
 
         if (isset($fossil->id)) {
-            $query = $this->pdo->prepare('UPDATE fossils SET '.implode('=?, ', $keys).'=? WHERE id=? LIMIT 1');
+            $query = $this->pdo->prepare('UPDATE fossil SET '.implode('=?, ', $keys).'=? WHERE id=? LIMIT 1');
             $vals[] = $fossil->id;
             return $query->execute($vals);
         } else {
-            $query = $this->pdo->prepare('INSERT INTO fossils ('.implode(',', $keys).') VALUES ('.implode(',', array_fill(0, count($vals), '?')).')');
+            $query = $this->pdo->prepare('INSERT INTO fossil ('.implode(',', $keys).') VALUES ('.implode(',', array_fill(0, count($vals), '?')).')');
             if ($query->execute($vals)) {
                 //Refetch to populate everything properly.
                 $refetched = $this->getAll(['id' => $this->pdo->lastInsertId()], 1);

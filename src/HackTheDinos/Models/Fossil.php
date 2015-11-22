@@ -37,6 +37,11 @@ class Fossil implements \JsonSerializable
      */
     public $description;
 
+    /**
+     * @var array
+     */
+    public $pictures;
+
     public function jsonSerialize()
     {
         $clone = clone $this;
