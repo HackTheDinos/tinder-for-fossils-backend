@@ -29,58 +29,68 @@ class InitialMigration extends AbstractMigration
     {
 	$fossil = $this->execute
 	("CREATE TABLE fossil 
-		( ID             BIGINT        NOT NULL
-		, SubmissionDate DATETIME      NOT NULL
-		, PaleoDecision  TINYINT       NOT NULL
-		, Latitude       DOUBLE        NOT NULL
-		, Longitude      DOUBLE        NOT NULL
-		, Title          VARCHAR(255)  NOT NULL
-		, Description    VARCHAR(4096) NOT NULL
+		( id             BIGINT        NOT NULL
+		, submission_date DATETIME      NOT NULL
+		, paleo_decision  TINYINT       NOT NULL
+		, latitude       DOUBLE        NOT NULL
+		, longitude      DOUBLE        NOT NULL
+		, title          VARCHAR(255)  NOT NULL
+		, description    VARCHAR(4096) NOT NULL
 		, PRIMARY KEY (ID)
-		-- , FOREIGN KEY (PaleoDecision) REFERENCES Decision(ID)
+		-- , FOREIGN KEY (paleo_decision) REFERENCES Decision(id)
 		); "
 	);
 
 	$decision = $this->execute
 	("CREATE TABLE decision 
-		( ID       TINYINT       NOT NULL
-		, Decision CHAR          NOT NULL
-		, Rational VARCHAR(4096) NOT NULL
-		, PRIMARY KEY (ID)
+		( id       TINYINT       NOT NULL
+		, decision CHAR          NOT NULL
+		, rational VARCHAR(4096) NOT NULL
+		, PRIMARY KEY (id)
 		);"
 	);
 
 	$vote = $this->execute
 	("CREATE TABLE vote
 		(ID        BIGINT NOT NULL
-		, FossilID  BIGINT NOT NULL
-		, Vote      Bool   NOT NULL
-		, VisitorID BIGINT NOT NULL
-		, PRIMARY KEY (ID)
-		-- , FOREIGN KEY (FossilID)  REFERENCES Fossil(ID)
-		-- , FOREIGN KEY (VisitorID) REFERENCES Visitor(ID)
+		, fossil_id  BIGINT NOT NULL
+		, vote      Bool   NOT NULL
+		, visitor_id BIGINT NOT NULL
+		, PRIMARY KEY (id)
+		-- , FOREIGN KEY (fossil_id)  REFERENCES Fossil(id)
+		-- , FOREIGN KEY (visitor_id) REFERENCES Visitor(id)
 		);"
 	);
 
 	$visitor = $this->execute
 	("CREATE TABLE visitor
-		( ID    BIGINT        NOT NULL
-		, Name  VARCHAR(1024) NOT NULL
-		, Email VARCHAR(1024) NOT NULL
+		( id    BIGINT        NOT NULL
+		, name  VARCHAR(1024) NOT NULL
+		, email VARCHAR(1024) NOT NULL
 		-- , TwitterThing
-		, PRIMARY KEY (ID)
+		, PRIMARY KEY (id)
 		-- Add OAuth Stuff too
 		);"
 	);
 
 	$picture = $this->execute
 	("CREATE TABLE picture
-		( ID           BIGINT NOT NULL
-		, PrimaryPhoto BOOL   NOT NULL
-		, FossilID     BIGINT NOT NULL
-		, ImageData    BLOB(65535)
+		( id           BIGINT NOT NULL
+		, primary_picture BOOL   NOT NULL
+		, fossil_id     BIGINT NOT NULL
+		, picture_data    BLOB(65535)	
+		-- add foreign key to fossil(id)
 		);"	
 	);
 
+	$archived_emails = $this->execute
+	("CREATE TABLE archived_emails
+		( id	BIGINT NOT NULL
+		, fossil_id BIGINT NOT NULL
+		, inquiry_email VARCHAR(4096)
+		, amnh_response_email VARCHAR(4096)
+		-- add foreign key to fossil(id)
+		);"
+	);
     }
 }
