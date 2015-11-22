@@ -82,7 +82,7 @@ class Fossils
 
         $fossil = $this->converter->entityArrayToModel(json_decode($request->getContent(), true), new Models\Fossil());
         if ($this->fossilRepo->save($fossil)) {
-            $this->log->addInfo('Created new user', [
+            $this->log->addInfo('Created new fossil', [
                 'namespace' => 'HackTheDinos\\Controllers\\Fossils',
                 'method' => 'postIndex',
                 'user' => (array)$fossil
@@ -90,7 +90,7 @@ class Fossils
             return new HttpFoundation\JsonResponse($fossil, 201);
         }
 
-        $this->log->addWarning('Unable to create user', [
+        $this->log->addWarning('Unable to create fossil', [
             'namespace' => 'HackTheDinos\\Controllers\\Fossils',
             'method' => 'postIndex',
             'request' => $request->getContent(),
