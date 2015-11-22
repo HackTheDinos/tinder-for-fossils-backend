@@ -1,20 +1,20 @@
-CREATE VIEW FossilStats AS
-SELECT fos.ID
-     , fos.SubmissionDate
-     , fos.Latitude
-     , fos.Longitude
-     , fos.Title
-     , fos.Description
-     , des.Decision
-     , SUM(    vot.Vote) AS 'Yay'
-     , SUM(NOT vot.Vote) AS 'Nay' 
-FROM  Visitor AS vis
-JOIN  Vote    AS vot
-ON    vot.VisitorID = vis.ID
-JOIN  Fossil  AS fos
-ON    fos.ID = vot.FossilID
-JOIN  Decision AS des
-ON    des.ID = fos.PaleoDecision
-GROUP BY fos.ID
+CREATE VIEW fossil_stats AS
+SELECT fos.id
+     , fos.submission_date
+     , fos.latitude
+     , fos.longitude
+     , fos.title
+     , fos.description
+     , des.decision
+     , SUM(    vot.vote) AS 'yay'
+     , SUM(NOT vot.vote) AS 'nay' 
+FROM  visitor AS vis
+JOIN  vote    AS vot
+ON    vot.visitor_id = vis.id
+JOIN  fossil  AS fos
+ON    fos.id = vot.fossil_id
+JOIN  decision AS des
+ON    des.id = fos.paleo_decision
+GROUP BY fos.id
 ;
 
