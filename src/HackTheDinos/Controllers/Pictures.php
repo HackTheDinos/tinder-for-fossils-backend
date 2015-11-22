@@ -52,7 +52,7 @@ class Pictures
         // first, get the image file and store it to our upload directory.
         $file = $request->files->get('picture');
 
-        $path = __DIR__.'/../../../upload/';
+        $path = __DIR__.'/../../../uploads/';
         $newfilename = date('Y-m-d_H:i:s') . '.' . $file->guessExtension();
         $file->move($path, $newfilename);
 
