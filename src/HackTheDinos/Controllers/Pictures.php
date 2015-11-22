@@ -24,7 +24,7 @@ class Pictures
 
     /**
      * Users constructor.
-     * @param Interfaces\Users $repo
+     * @param Interfaces\Pictures $repo
      * @param Services\Converter $converter
      * @param \Monolog\Logger $log
      */
@@ -52,15 +52,29 @@ class Pictures
         // first, get the image file and store it to our upload directory.
         $file = $request->files->get('picture');
 
-        $path = __DIR__.'/../../../upload/';
+        $path = __DIR__.'/../../../uploads/';
         $newfilename = date('Y-m-d_H:i:s') . '.' . $file->guessExtension();
         $file->move($path, $newfilename);
 
         // TODO create a model object
+        $picture = new Models\Picture($newfilename);
 
         // TODO save to DB
-
-        // TODO return picture db id
-        return new HttpFoundation\Response($newfilename, 200);
+        if ($this->repo->save($picture)) {
+            $this->log->addInfo('Created new picture', [
+                'namespace' => 'HackTheDinos\\Controllers\\Picture',
+                'method' => 'postIndex',
+                'picture' => (array)$picture
+            ]);
+            // TODO return picture db id
+            return new HttpFoundation\JsonResponse((array)$picture, 200);
+        }
+        $this->log->addWarning('Unable to create picture', [
+            'namespace' => 'HackTheDinos\\Controllers\\Picture',
+            'method' => 'postIndex',
+            'request' => $request->getContent(),
+            'user' => (array)$picture
+        ]);
+        return new HttpFoundation\Response('Bad Request', 400);
     }
 }

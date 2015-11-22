@@ -36,7 +36,7 @@ class InitialMigration extends AbstractMigration
 		, longitude      DOUBLE        NOT NULL
 		, title          VARCHAR(255)  NOT NULL
 		, description    VARCHAR(4096) NOT NULL
-		, PRIMARY KEY (ID)
+		, PRIMARY KEY (id)
 		-- , FOREIGN KEY (paleo_decision) REFERENCES Decision(id)
 		); "
 	);
@@ -52,7 +52,7 @@ class InitialMigration extends AbstractMigration
 
 	$vote = $this->execute
 	("CREATE TABLE vote
-		(ID        BIGINT NOT NULL
+		(id        BIGINT NOT NULL
 		, fossil_id  BIGINT NOT NULL
 		, vote      Bool   NOT NULL
 		, visitor_id BIGINT NOT NULL
