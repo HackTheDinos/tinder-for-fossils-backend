@@ -62,3 +62,5 @@ $app->options('/users/{id}', 'user.controller:optionsIndex')
     ->value('id', null)
     ->after($addCorsHeaders)
     ->after($addOptionsHeaders);
+
+$app->run();

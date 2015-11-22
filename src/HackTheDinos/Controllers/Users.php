@@ -48,7 +48,20 @@ class Users
             'type' => 'request',
         ]);
 
-        return 'Hello World!';
+        $count = $request->get('count', 10);
+        $count = $count > 100 ? 100 : $count; //Cap the max number of returned results
+        $start = $request->get('start', 0);
+        $start = $start < 0 ? 0 : $start; //Prevent negatives on the start value
+
+        $users = is_null($id) ? $this->repo->getAll([], $count, $start) : $this->repo->getById($id);
+
+        $this->log->addInfo('Found Users', [
+            'namespace' => 'HackTheDinos\\Controllers\\User',
+            'method' => 'getIndex',
+            'users' => $users,
+        ]);
+
+        return new HttpFoundation\JsonResponse($users, 200);
     }
 
     /**

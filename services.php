@@ -1,5 +1,11 @@
 <?php
 
+$app['login.service'] = $app->share(function () use ($app) {
+    return new \HackTheDinos\Services\LoginChecker(
+        $app['users.repository']
+    );
+});
+
 $app['pdo.service'] = $app->share(function () use ($app) {
     return new \PDO(
         $app['database']['pdo']['connection'],
