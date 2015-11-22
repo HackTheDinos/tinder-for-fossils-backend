@@ -59,11 +59,11 @@ class Fossils implements Interfaces\Fossils
         $vals = array_values($modelArray);
 
         if (isset($fossil->id)) {
-            $query = $this->pdo->prepare('UPDATE fossils SET '.implode('=?, ', $keys).'=? WHERE id=? LIMIT 1');
+            $query = $this->pdo->prepare('UPDATE fossil SET '.implode('=?, ', $keys).'=? WHERE id=? LIMIT 1');
             $vals[] = $fossil->id;
             return $query->execute($vals);
         } else {
-            $query = $this->pdo->prepare('INSERT INTO fossils ('.implode(',', $keys).') VALUES ('.implode(',', array_fill(0, count($vals), '?')).')');
+            $query = $this->pdo->prepare('INSERT INTO fossil ('.implode(',', $keys).') VALUES ('.implode(',', array_fill(0, count($vals), '?')).')');
             if ($query->execute($vals)) {
                 //Refetch to populate everything properly.
                 $refetched = $this->getAll(['id' => $this->pdo->lastInsertId()], 1);
