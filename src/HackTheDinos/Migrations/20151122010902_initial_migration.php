@@ -37,6 +37,7 @@ class InitialMigration extends AbstractMigration
 		, title          VARCHAR(255)  NOT NULL
 		, description    VARCHAR(4096) NOT NULL
 		, PRIMARY KEY (id)
+		, visitor_id	BIGINT NOT NULL
 		-- , FOREIGN KEY (paleo_decision) REFERENCES Decision(id)
 		); "
 	);

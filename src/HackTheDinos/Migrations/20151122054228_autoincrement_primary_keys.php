@@ -88,6 +88,8 @@ class InitialMigration extends AbstractMigration
 		-- add foreign key to fossil(id)
 		);"	
 	);
+	$auto_int_1000 = $this->execute
+	("ALTER TABLE picture AUTO_INCREMENT=1000"
 
 	$archived_emails = $this->execute
 	("CREATE TABLE archived_emails
