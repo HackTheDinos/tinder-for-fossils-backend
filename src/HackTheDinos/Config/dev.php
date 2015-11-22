@@ -6,7 +6,7 @@ return [
 
     'debug' => true,
 
-    'cors.domains' => 'http://localhost:8000',
+    'cors.domains' => 'http://localhost:8080',
 
     'database' => [
         'pdo' => [
