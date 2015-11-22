@@ -17,14 +17,20 @@ class Fossils implements Interfaces\Fossils
     private $converter;
 
     /**
+     * @var Interfaces\Pictures
+     */
+    private $pictureRepo;
+
+    /**
      * Fossils constructor.
      * @param \PDO $pdo
      * @param Services\Converter $converter
      */
-    public function __construct(\PDO $pdo, Services\Converter $converter)
+    public function __construct(\PDO $pdo, Services\Converter $converter, Interfaces\Pictures $pictureRepo)
     {
         $this->pdo = $pdo;
         $this->converter = $converter;
+        $this->pictureRepo = $pictureRepo;
     }
 
     public function getById($fossilId)
@@ -43,7 +49,14 @@ class Fossils implements Interfaces\Fossils
         $query = $this->pdo->prepare("SELECT * FROM fossil {$whereClause} LIMIT {$start}, {$count}");
         $entities = $query->execute(array_values($columns)) ? $query->fetchAll(\PDO::FETCH_ASSOC) : [];
 
-        return $this->converter->entityArraysToModels($entities, $temp);
+        $models = $this->converter->entityArraysToModels($entities, $temp);
+
+        foreach ($models as $model) {
+            $pictures = $this->pictureRepo->getAll(['fossilId' => $model->id], 5);
+            $model->pictures = $pictures;
+        }
+
+        return $models;
     }
 
     public function save(Models\Fossil &$fossil)
